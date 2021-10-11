@@ -1,31 +1,12 @@
 package heap
 
 import (
-	"fmt"
 	"testing"
 )
 
-type KeyValue struct {
-	key string
-	val string
-}
+func MaxData() *MaxHeap {
 
-func (kv KeyValue) String() string {
-	return fmt.Sprintf("[%s]:%s", kv.key, kv.val)
-}
-
-func (kv KeyValue) Compare(v Value) int {
-	if kv.val < v.(KeyValue).val {
-		return -1
-	} else if kv.val > v.(KeyValue).val {
-		return 1
-	}
-	return 0
-}
-
-func Data() *Heap {
-
-	heap := New()
+	heap := NewMax()
 
 	heap.PushValue(KeyValue{key: "A", val: "1"})
 	heap.PushValue(KeyValue{key: "B", val: "2"})
@@ -37,13 +18,13 @@ func Data() *Heap {
 	return heap
 }
 
-func TestPush(t *testing.T) {
-	heap := Data()
+func TestMaxPush(t *testing.T) {
+	heap := MaxData()
 	heap.Show("new")
 }
 
-func TestInsert(t *testing.T) {
-	heap := Data()
+func TestMaxInsert(t *testing.T) {
+	heap := MaxData()
 
 	heap.Show("old")
 
