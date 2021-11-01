@@ -1,19 +1,19 @@
 package common
 
-type Queue struct {
+type PrioQueue struct {
 	heap *Heap
 }
 
-func NewQueue() *Queue {
-	return &Queue{
+func NewPrioQueue() *PrioQueue {
+	return &PrioQueue{
 		heap: NewMaxHeap(),
 	}
 }
 
-func (q *Queue) Push(key int, val interface{}) {
+func (q *PrioQueue) Push(key int, val interface{}) {
 	q.heap.InsertNode(key, val)
 }
 
-func (q *Queue) Pop() *Node {
+func (q *PrioQueue) Pop() *Node {
 	return q.heap.Delete()
 }

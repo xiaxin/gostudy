@@ -16,6 +16,10 @@ func NewMinHeap() *Heap {
 	return &Heap{nil, false}
 }
 
+func (h *Heap) Size() int {
+	return len(h.nodes)
+}
+
 func (h *Heap) InsertNode(key int, val interface{}) *Node {
 	node := NewNode(key, val)
 	return h.Insert(node)

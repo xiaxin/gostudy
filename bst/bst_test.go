@@ -113,4 +113,12 @@ func TestTreeDelete(t *testing.T) {
 		t.Errorf("Unexpected %v", inOrder)
 	}
 
+	tr5 := TrD()
+	tr5.Delete(NodeStruct{"A", 4})
+
+	inOrder = tr5.InOrder()
+	if inOrder != "C(1) B(2) D(3) A(4) G(5) F(6) I(7) H(8) E(9) K(10) L(12) " {
+		t.Errorf("Unexpected %v", inOrder)
+	}
+
 }
