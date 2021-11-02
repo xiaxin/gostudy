@@ -1,7 +1,5 @@
 package tree
 
-import "fmt"
-
 type BST struct {
 	root *BSTNode
 }
@@ -163,55 +161,60 @@ func (t *BST) Delete(key int) *BSTNode {
 }
 
 // 前序
-func (t *BST) PreOrderTraverse() string {
-	return t.preOrderTraverse(t.root)
-}
+func (t *BST) PreOrderTraverse() []string {
+	var result []string
 
-func (t *BST) preOrderTraverse(node *BSTNode) string {
-	if nil == node {
-		return ""
-	}
-
-	result := fmt.Sprintf(" %s", node.String())
-
-	result += t.preOrderTraverse(node.Left)
-	result += t.preOrderTraverse(node.Right)
+	t.preOrderTraverse(t.root, &result)
 
 	return result
+}
+
+func (t *BST) preOrderTraverse(node *BSTNode, result *[]string) {
+	if nil == node {
+		return
+	}
+
+	*result = append(*result, node.String())
+
+	t.preOrderTraverse(node.Left, result)
+	t.preOrderTraverse(node.Right, result)
+
 }
 
 // 中序
-func (t *BST) InOrderTraverse() string {
-	return t.inOrderTraverse(t.root)
-}
+func (t *BST) InOrderTraverse() []string {
+	var result []string
 
-func (t *BST) inOrderTraverse(node *BSTNode) string {
-	if nil == node {
-		return ""
-	}
-
-	result := t.inOrderTraverse(node.Left)
-	result += fmt.Sprintf(" %s", node.String())
-	result += t.inOrderTraverse(node.Right)
+	t.inOrderTraverse(t.root, &result)
 
 	return result
+}
+
+func (t *BST) inOrderTraverse(node *BSTNode, result *[]string) {
+	if nil == node {
+		return
+	}
+
+	t.inOrderTraverse(node.Left, result)
+	*result = append(*result, node.String())
+	t.inOrderTraverse(node.Right, result)
 }
 
 // 后续
-func (t *BST) PostOrderTraverse() string {
-	return t.postOrderTraverse(t.root)
+func (t *BST) PostOrderTraverse() []string {
+	var result []string
+	t.postOrderTraverse(t.root, &result)
+	return result
 }
 
-func (t *BST) postOrderTraverse(node *BSTNode) string {
+func (t *BST) postOrderTraverse(node *BSTNode, result *[]string) {
 	if nil == node {
-		return ""
+		return
 	}
 
-	result := t.postOrderTraverse(node.Left)
-	result += t.postOrderTraverse(node.Right)
-	result += fmt.Sprintf(" %s", node.String())
-
-	return result
+	t.postOrderTraverse(node.Left, result)
+	t.postOrderTraverse(node.Right, result)
+	*result = append(*result, node.String())
 }
 
 func (t *BST) Max(n *BSTNode) *BSTNode {
