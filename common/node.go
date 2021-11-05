@@ -26,6 +26,10 @@ func (n *Node) ValString() string {
 	return n.val.(string)
 }
 
+func (n *Node) IntString() int {
+	return n.val.(int)
+}
+
 func (n *Node) Compare(node *Node) int {
 	if n.key == node.key {
 		return 0
