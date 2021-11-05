@@ -22,6 +22,10 @@ func (n *Node) Key() int {
 	return n.key
 }
 
+func (n *Node) ValString() string {
+	return n.val.(string)
+}
+
 func (n *Node) Compare(node *Node) int {
 	if n.key == node.key {
 		return 0

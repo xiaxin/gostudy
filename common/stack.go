@@ -50,3 +50,35 @@ func (s *Stack) Pop() *Node {
 func (s *Stack) Size() int {
 	return s.size
 }
+
+func (s *Stack) String() string {
+	var result = ""
+	node := s.tail
+	for {
+
+		if nil == node {
+			break
+		}
+		result = node.String() + result
+
+		node = node.Prev
+	}
+
+	return result
+}
+
+func (s *Stack) ValString() string {
+	var result = ""
+	node := s.tail
+	for {
+
+		if nil == node {
+			break
+		}
+		result = node.ValString() + result
+
+		node = node.Prev
+	}
+
+	return result
+}
