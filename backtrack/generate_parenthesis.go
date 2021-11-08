@@ -1,40 +1,43 @@
 package backtrack
 
 import (
-	"gostudy/common"
+	"strings"
 )
 
-// TODO 22. 括号生成
-func Parentheses(n int) []string {
-	var result []string
-	stack := common.NewStack()
+// 22. 括号生成
+func GenerateParentheses(n int) []string {
+	var (
+		result []string
+		track  []string
+		fn     func(left int, right int)
+	)
 
-	parentheses(n, n, stack, &result)
+	// left/right 左右括号的次数
+	fn = func(left int, right int) {
+		if right < left {
+			return
+		}
+
+		if left < 0 || right < 0 {
+			return
+		}
+
+		if left == 0 && right == 0 {
+			//  添加结果
+			result = append(result, strings.Join(track, ""))
+			return
+		}
+
+		track = append(track, "(")
+		fn(left-1, right)
+		track = track[0 : len(track)-1]
+
+		track = append(track, ")")
+		fn(left, right-1)
+		track = track[0 : len(track)-1]
+	}
+
+	fn(n, n)
 
 	return result
-}
-
-func parentheses(left, right int, stack *common.Stack, result *[]string) {
-
-	if right < left {
-		return
-	}
-	if left < 0 || right < 0 {
-		return
-	}
-
-	if left == 0 && right == 0 {
-		tmp := stack.ValString()
-		*result = append(*result, tmp)
-		return
-	}
-
-	stack.PushNode(0, "(")
-
-	parentheses(left-1, right, stack, result)
-	stack.Pop()
-
-	stack.PushNode(1, ")")
-	parentheses(left, right-1, stack, result)
-	stack.Pop()
 }

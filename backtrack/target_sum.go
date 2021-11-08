@@ -1,36 +1,33 @@
 package backtrack
 
-import (
-	"gostudy/common"
-)
+// 494. 目标和 TODO 时间太久
+func TargetSum(nums []int, target int) int {
+	var (
+		result int
+		track  []int
+		fn     func(nums []int, pos int, sum int, target int)
+	)
 
-// TODO 494. 目标和
-func TargetSum(nums []int, target int) []string {
-	var result []string
-	stack := common.NewStack()
+	fn = func(nums []int, pos int, sum int, target int) {
 
-	targetSum(nums, 0, 0, target, stack, &result)
-
-	return result
-}
-
-func targetSum(nums []int, pos int, sum int, target int, stack *common.Stack, result *[]string) {
-
-	// fmt.Println(sum, stack)
-	if pos == len(nums) {
-		if sum == target {
-			tmp := stack.String()
-			*result = append(*result, tmp)
+		if pos == len(nums) {
+			if sum == target {
+				result += 1
+				return
+			}
 			return
 		}
-		return
+
+		track = append(track, nums[pos])
+		fn(nums, pos+1, sum+nums[pos], target)
+		track = track[0 : len(track)-1]
+
+		track = append(track, -nums[pos])
+		fn(nums, pos+1, sum-nums[pos], target)
+		track = track[0 : len(track)-1]
 	}
 
-	stack.PushNode(1, nums[pos])
-	targetSum(nums, pos+1, sum+nums[pos], target, stack, result)
-	stack.Pop()
+	fn(nums, 0, 0, target)
 
-	stack.PushNode(-1, -nums[pos])
-	targetSum(nums, pos+1, sum-nums[pos], target, stack, result)
-	stack.Pop()
+	return result
 }
