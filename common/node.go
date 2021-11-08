@@ -22,6 +22,10 @@ func (n *Node) Key() int {
 	return n.key
 }
 
+func (n *Node) Val() interface{} {
+	return n.val
+}
+
 func (n *Node) ValString() string {
 	return n.val.(string)
 }

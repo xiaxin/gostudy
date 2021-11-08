@@ -31,23 +31,21 @@ func (l *List) Push(n *Node) {
 }
 
 func (l *List) Pop() *Node {
-	if nil == l.tail {
+	if nil == l.head {
 		return nil
 	}
-	p := l.tail.Prev
-	n := l.tail
 
-	l.tail = p
+	h := l.head
 
-	if nil != l.tail {
-		l.tail.Next = nil
-	} else {
-		l.head = nil
+	l.head = h.Next
+
+	if l.head == nil {
+		l.tail = nil
 	}
 
 	l.size--
 
-	return n
+	return h
 }
 
 func (l *List) Head() *Node {

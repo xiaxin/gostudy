@@ -4,17 +4,7 @@ import (
 	"gostudy/common"
 )
 
-/**
-	pos 指向 nums 的位置
-
-	pos == len(nums) 退出  如果 track 里的值是 target 加入 result
-
-	track 里的 size() == 5
-
-	循环 i := range nums
-		i 分两种 +i 和 -i 都对应一套 pop  push
-**/
-
+// TODO 494. 目标和
 func TargetSum(nums []int, target int) []string {
 	var result []string
 	stack := common.NewStack()

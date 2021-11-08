@@ -4,6 +4,7 @@ import (
 	"gostudy/common"
 )
 
+// TODO 22. 括号生成
 func Parentheses(n int) []string {
 	var result []string
 	stack := common.NewStack()
