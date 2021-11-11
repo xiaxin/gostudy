@@ -1,6 +1,6 @@
 package backtrack
 
-// TODO 37. 解数独
+// TODO 37. 解数独（困难）
 func Sudoku(nums [][]int, wh int) (bool, [][]int) {
 	return sudoku(nums, wh, 0, 0)
 }
