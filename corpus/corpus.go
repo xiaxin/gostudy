@@ -184,6 +184,34 @@ func (c *corpus) Cut(text string) []string {
 
 }
 
+func (c *corpus) CutForSearch(text string) []string {
+	var result []string
+
+	words := c.Cut(text)
+
+	for _, word := range words {
+		runes := []rune(word)
+		for _, incr := range []int{2, 3} {
+			if len(runes) <= incr {
+				continue
+			}
+
+			var gram string
+			for i := 0; i < len(runes)-incr+1; i++ {
+				gram = string(runes[i : i+incr])
+				word := c.dict.Find(gram)
+				if word != nil && word.freq > 0 {
+					result = append(result, gram)
+				}
+			}
+		}
+
+		result = append(result, word)
+	}
+
+	return result
+}
+
 func (c *corpus) ToSlice(text string) []*Word {
 
 	dag := c.makeDag(text)

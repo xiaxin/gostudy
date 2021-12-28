@@ -33,6 +33,26 @@ func init() {
 	c.AddWord("清华大学", 20)
 	c.AddWord("北京清华大学", 20)
 
+	// 搜索模式
+	c.AddWord("小明", 20)
+	c.AddWord("硕士", 20)
+	c.AddWord("毕业", 20)
+
+	c.AddWord("中国", 20)
+
+	c.AddWord("科学", 20)
+	c.AddWord("学院", 20)
+	c.AddWord("科学院", 20)
+	c.AddWord("中国科学院", 20)
+	c.AddWord("计算", 20)
+	c.AddWord("计算所", 20)
+
+	c.AddWord("日本", 20)
+
+	c.AddWord("京都", 20)
+	c.AddWord("日本京都大学", 20)
+	c.AddWord("深造", 20)
+
 }
 
 func TestToSlice(t *testing.T) {
@@ -61,6 +81,16 @@ func TestCutAll(t *testing.T) {
 	text := "我来到北京清华大学"
 
 	result := c.CutAll(text)
+
+	log.Println(result)
+}
+
+// 搜索模式
+func TestCutForSearch(t *testing.T) {
+
+	text := "小明硕士毕业于中国科学院计算所，后在日本京都大学深造"
+
+	result := c.CutForSearch(text)
 
 	log.Println(result)
 }
