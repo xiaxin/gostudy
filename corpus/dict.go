@@ -2,49 +2,51 @@ package corpus
 
 type Dict interface {
 	Size() int
-	Add(word string, freq int) error
+	Add(word *Word) error
 	Del(word string) error
-	Find(word string) int
-	SumFreq() int
+	Find(word string) *Word
+	SumFreq() float64
 }
 
 func NewHashDict() Dict {
 	return &hashDict{
-		words: make(map[string]int),
+		words:   make(map[string]*Word),
+		size:    0,
+		sumFreq: 0,
 	}
 }
 
 type hashDict struct {
-	words   map[string]int
+	words   map[string]*Word
 	size    int
-	sumFreq int
+	sumFreq float64
 }
 
 func (d *hashDict) Size() int {
 	return d.size
 }
 
-func (d *hashDict) Add(word string, freq int) error {
-	d.words[word] += freq
-	d.sumFreq += freq
+func (d *hashDict) Add(word *Word) error {
+	d.words[word.str] = word
+	d.sumFreq += word.freq
 	return nil
 }
 
 func (d *hashDict) Del(word string) error {
-	if v, ok := d.words[word]; ok {
-		delete(d.words, word)
-		d.sumFreq -= v
+	if w, ok := d.words[word]; ok {
+		delete(d.words, w.str)
+		d.sumFreq -= w.freq
 	}
 	return nil
 }
 
-func (d *hashDict) Find(word string) int {
-	if v, ok := d.words[word]; ok {
-		return v
+func (d *hashDict) Find(word string) *Word {
+	if w, ok := d.words[word]; ok {
+		return w
 	}
-	return 0
+	return nil
 }
 
-func (d *hashDict) SumFreq() int {
+func (d *hashDict) SumFreq() float64 {
 	return d.sumFreq
 }

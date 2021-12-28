@@ -1,6 +1,7 @@
 package corpus
 
 import (
+	"log"
 	"math"
 	"regexp"
 	"strings"
@@ -24,26 +25,20 @@ func New() *corpus {
 	}
 }
 
-func (c *corpus) AddWord(word string, freq int) error {
-	return c.dict.Add(word, freq)
+func (c *corpus) AddWord(word string, freq float64, pos ...string) error {
+	return c.dict.Add(NewWord(word, freq, pos...))
 }
 
 func (c *corpus) DelWord(word string) error {
 	return c.dict.Del(word)
 }
 
-func (c *corpus) FindWord(word string) (Word, int) {
-	freq := c.dict.Find(word)
-	if freq == 0 {
-		return NewWord(word), 0
-	}
-
-	return NewWord(word), freq
-
+func (c *corpus) FindWord(word string) *Word {
+	return c.dict.Find(word)
 }
 
 func (c *corpus) makeDag(text string) map[int][]int {
-	words := NewWord(text)
+	words := NewWord(text, 0)
 	runes := words.ToRunes()
 
 	dag := make(map[int][]int)
@@ -58,17 +53,16 @@ func (c *corpus) makeDag(text string) map[int][]int {
 		temp := runes[i : j+1]
 
 		for {
-			_, freq := c.FindWord(string(temp))
+			word := c.FindWord(string(temp))
 
-			if freq != 0 {
+			if word != nil {
 
-				// log.Printf("[make-dag] i[%d] j[%d] %s %d \r\n", i, j, string(temp), freq)
+				// log.Printf("[make-dag] i[%d] j[%d] %s %f \r\n", i, j, string(temp), word.freq)
 
-				if freq > 0 {
+				if word.freq > 0 {
 					dag[i] = append(dag[i], j)
 				}
 			}
-
 			j++
 
 			if j >= n {
@@ -82,12 +76,14 @@ func (c *corpus) makeDag(text string) map[int][]int {
 		}
 	}
 
+	// log.Printf("[make-dag] return %v", dag)
+
 	return dag
 }
 
 func (c *corpus) calcDag(text string, dag map[int][]int) map[int]DagRoute {
 
-	words := NewWord(text)
+	words := NewWord(text, 0)
 	runes := words.ToRunes()
 
 	n := len(runes)
@@ -103,16 +99,20 @@ func (c *corpus) calcDag(text string, dag map[int][]int) map[int]DagRoute {
 	for idx := n - 1; idx >= 0; idx-- {
 		for _, i := range dag[idx] {
 			temp := runes[idx : i+1]
-			freq := float64(c.dict.Find(string(temp)))
+			word := c.dict.Find(string(temp))
+
+			if word == nil {
+				word = NewWord(string(temp), 0)
+			}
 
 			// log.Printf("[calc-dag] idx[%d] i[%d] freq:%f  runes[idx : i+1]:%s", idx, i, freq, string(runes[idx:i+1]))
 
-			if freq > 0 {
-				f := math.Log(freq) - logT + rs[i+1].freq
-				r = DagRoute{freq: f, index: i}
+			if word.freq > 0 {
+				f := math.Log(word.freq) - logT + rs[i+1].freq
+				r = DagRoute{freq: f, index: i, word: word}
 			} else {
 				f := math.Log(1.0) - logT + rs[i+1].freq
-				r = DagRoute{freq: f, index: i}
+				r = DagRoute{freq: f, index: i, word: word}
 			}
 
 			// log.Printf("[calc-dag] idx[%d] i[%d] r.freq:%f  runes[idx : i+1]:%s", idx, i, r.freq, string(runes[idx:i+1]))
@@ -147,6 +147,9 @@ func (c *corpus) splitDag(text string) []string {
 	dag := c.makeDag(text)
 
 	routes := c.calcDag(text, dag)
+
+	log.Printf("[splite dag] calc-dag:%v", routes)
+
 	// 字符长度
 	length := len(runes)
 
@@ -180,4 +183,32 @@ func (c *corpus) splitDag(text string) []string {
 
 	return result
 
+}
+
+func (c *corpus) ToSlice(text string) []*Word {
+
+	dag := c.makeDag(text)
+
+	routes := c.calcDag(text, dag)
+
+	return ToSlice(routes)
+}
+
+func ToSlice(routes map[int]DagRoute) []*Word {
+	var result []*Word
+
+	var y int
+
+	len := len(routes) - 1
+
+	for x := 0; x < len; {
+		y = routes[x].index + 1
+
+		word := routes[x].word
+
+		result = append(result, word)
+		x = y
+	}
+
+	return result
 }

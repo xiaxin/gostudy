@@ -4,15 +4,24 @@ type Word struct {
 	str   string
 	len   int
 	runes []rune
+	freq  float64
+	pos   string
 }
 
-func NewWord(str string) Word {
+func NewWord(str string, freq float64, pos ...string) *Word {
 	runes := []rune(str)
 
-	return Word{
+	var po string
+
+	if len(pos) > 0 {
+		po = pos[0]
+	}
+	return &Word{
 		str:   str,
 		len:   len(runes),
 		runes: runes,
+		freq:  freq,
+		pos:   po,
 	}
 }
 
