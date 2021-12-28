@@ -1,7 +1,6 @@
 package corpus
 
 import (
-	"log"
 	"math"
 	"regexp"
 	"strings"
@@ -133,7 +132,7 @@ func (c *corpus) calcDag(text string, dag map[int][]int) map[int]DagRoute {
 }
 
 // 使用DAG分词
-func (c *corpus) splitDag(text string) []string {
+func (c *corpus) Cut(text string) []string {
 
 	mLen := int(float32(len(text))/RatioWord) + 1
 	result := make([]string, 0, mLen)
@@ -148,7 +147,7 @@ func (c *corpus) splitDag(text string) []string {
 
 	routes := c.calcDag(text, dag)
 
-	log.Printf("[splite dag] calc-dag:%v", routes)
+	// log.Printf("[cut] calc-dag:%v", routes)
 
 	// 字符长度
 	length := len(runes)
@@ -160,7 +159,7 @@ func (c *corpus) splitDag(text string) []string {
 		y = routes[x].index + 1
 		frag := runes[x:y]
 
-		// log.Printf("[splite dag] frag:%s", string(frag))
+		// log.Printf("[cut] frag:%s", string(frag))
 
 		if reEng.MatchString(string(frag)) && len(frag) == 1 {
 			buf = append(buf, frag...)
@@ -194,6 +193,14 @@ func (c *corpus) ToSlice(text string) []*Word {
 	return ToSlice(routes)
 }
 
+func (c *corpus) CutAll(text string) []string {
+
+	dag := c.makeDag(text)
+
+	return CutAll(text, dag)
+}
+
+// TODO
 func ToSlice(routes map[int]DagRoute) []*Word {
 	var result []*Word
 
@@ -208,6 +215,40 @@ func ToSlice(routes map[int]DagRoute) []*Word {
 
 		result = append(result, word)
 		x = y
+	}
+
+	return result
+}
+
+// 全模式
+func CutAll(text string, dag map[int][]int) []string {
+	var (
+		result []string
+		runes  = []rune(text)
+		ks     = make([]int, len(dag))
+		start  = -1
+	)
+
+	for k := range dag {
+		ks[k] = k
+	}
+
+	var l []int
+	for k := range ks {
+		l = dag[k]
+
+		if len(l) == 1 && k > start {
+			result = append(result, string(runes[k:l[0]+1]))
+			start = l[0]
+			continue
+		}
+
+		for _, j := range l {
+			if j > k {
+				result = append(result, string(runes[k:j+1]))
+				start = j
+			}
+		}
 	}
 
 	return result
